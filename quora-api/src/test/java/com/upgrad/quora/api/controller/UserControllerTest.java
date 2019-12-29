@@ -37,6 +37,21 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("SGR-002"));
     }
 
+    @Test
+    public void signinWithWrongUsername() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/signin")
+                .header("authorization", "Basic bm9uX2V4aXN0aW5nX3VzZXJuYW1lOmFiYw=="))
+                .andExpect(status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATH-001"));
+    }
+
+    @Test
+    public void signinWithWrongPassword() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/user/signin")
+                .header("authorization", "Basic YWJoaTphYmM="))
+                .andExpect(status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATH-002"));
+    }
 
     //This test case passes when you try to signout but the JWT token entered does not exist in the database.
     @Test
