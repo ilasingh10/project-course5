@@ -20,7 +20,7 @@ public class UserProfileService {
     public UserEntity getUser(final String userUuid, final String authorizationToken) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthEntity userAuthEntity = userDao.getUserAuth(authorizationToken);
-        if(userAuthEntity == null) {
+        if (userAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
         }
         UserEntity userEntity = userDao.getUserByUuid(userUuid);
@@ -31,7 +31,7 @@ public class UserProfileService {
         /**
          * should be ideally now.isAfter(userAuthEntity.getExpiresAt()) || now.isAfter(userAuthEntity.getLogoutAt()
          */
-        if(userAuthEntity.getLogoutAt() != null) {
+        if (userAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
         }
         return userEntity;
