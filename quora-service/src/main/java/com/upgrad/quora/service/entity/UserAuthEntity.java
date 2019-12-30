@@ -23,6 +23,18 @@ public class UserAuthEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    @Column(name = "UUID")
+    @Size(max = 200)
+    private String uuid;
+
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private UserEntity user;

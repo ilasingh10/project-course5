@@ -49,6 +49,9 @@ public class UserController {
         userEntity.setEmail(signupUserRequest.getEmailAddress());
         userEntity.setPassword(signupUserRequest.getPassword());
         userEntity.setContactnumber(signupUserRequest.getContactNumber());
+        userEntity.setCountry(signupUserRequest.getCountry());
+        userEntity.setAboutme(signupUserRequest.getAboutMe());
+        userEntity.setDob(signupUserRequest.getDob());
         userEntity.setSalt("1234abc");
         userEntity.setRole("nonadmin");
 
