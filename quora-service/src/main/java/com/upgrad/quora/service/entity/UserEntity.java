@@ -69,6 +69,8 @@ public class UserEntity implements Serializable {
 
     @Column(name = "ABOUTME")
     private String aboutme;
+    @Column(name = "COUNTRY")
+    private String country;
 
     public long getId() {
         return id;
@@ -173,10 +175,6 @@ public class UserEntity implements Serializable {
     public void setCountry(String country) {
         this.country = country;
     }
-
-    @Column(name = "COUNTRY")
-    private String country;
-
 
     @Override
     public boolean equals(Object obj) {

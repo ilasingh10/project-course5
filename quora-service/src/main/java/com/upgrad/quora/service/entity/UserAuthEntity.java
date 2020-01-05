@@ -22,6 +22,24 @@ public class UserAuthEntity implements Serializable {
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "UUID")
+    @Size(max = 200)
+    private String uuid;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private UserEntity user;
+    @Column(name = "ACCESS_TOKEN")
+    @NotNull
+    @Size(max = 500)
+    private String accessToken;
+    @Column(name = "LOGIN_AT")
+    @NotNull
+    private ZonedDateTime loginAt;
+    @Column(name = "EXPIRES_AT")
+    @NotNull
+    private ZonedDateTime expiresAt;
+    @Column(name = "LOGOUT_AT")
+    private ZonedDateTime logoutAt;
 
     public String getUuid() {
         return uuid;
@@ -30,31 +48,6 @@ public class UserAuthEntity implements Serializable {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-
-    @Column(name = "UUID")
-    @Size(max = 200)
-    private String uuid;
-
-    @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    private UserEntity user;
-
-    @Column(name = "ACCESS_TOKEN")
-    @NotNull
-    @Size(max = 500)
-    private String accessToken;
-
-    @Column(name = "LOGIN_AT")
-    @NotNull
-    private ZonedDateTime loginAt;
-
-    @Column(name = "EXPIRES_AT")
-    @NotNull
-    private ZonedDateTime expiresAt;
-
-    @Column(name = "LOGOUT_AT")
-    private ZonedDateTime logoutAt;
-
 
     public long getId() {
         return id;
