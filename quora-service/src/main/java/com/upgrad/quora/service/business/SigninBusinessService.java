@@ -1,7 +1,7 @@
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.UserDao;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,15 @@ public class SigninBusinessService {
 
     //Authenticates a user based on username and password when the user signs in for the first time
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
-        UserEntity userEntity = userDao.getUserByUserName(username);
+    public UserAuthEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
+        UserEntity userEntity = userDao.getUserByUsername(username);
         if (userEntity == null) {
             throw new AuthenticationFailedException("ATH-001", "This username does not exist");
         }
         final String encryptedPassword = cryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-            UserAuthTokenEntity userAuthToken = new UserAuthTokenEntity();
+            UserAuthEntity userAuthToken = new UserAuthEntity();
             userAuthToken.setUser(userEntity);
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);

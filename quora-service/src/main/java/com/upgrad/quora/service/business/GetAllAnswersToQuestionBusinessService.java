@@ -5,7 +5,7 @@ import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +30,13 @@ public class GetAllAnswersToQuestionBusinessService {
 
     //Checks user signedin status based on accessToken
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity verifyAuthToken(final String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if (userAuthTokenEntity == null) {
+    public UserAuthEntity verifyAuthToken(final String accessToken) throws AuthorizationFailedException {
+        UserAuthEntity UserAuthEntity = userDao.getUserAuthToken(accessToken);
+        if (UserAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if (userAuthTokenEntity.getLogoutAt() != null) {
+        } else if (UserAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get the answers");
-        }   return userAuthTokenEntity;
+        }   return UserAuthEntity;
     }
 
     //Returns question based on questionId if exists

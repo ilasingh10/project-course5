@@ -22,13 +22,13 @@ public class DeleteQuestionBusinessService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity verifyAuthToken(final String accessToken) throws AuthorizationFailedException {
-        UserAuthEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if (userAuthTokenEntity == null) {
+        UserAuthEntity UserAuthEntity = userDao.getUserAuthToken(accessToken);
+        if (UserAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if (((UserAuthEntity) userAuthTokenEntity).getLogout_at() != null) {
+        } else if (((UserAuthEntity) UserAuthEntity).getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to delete a question");
         } else {
-            return userDao.getUserByUuid(userAuthTokenEntity.getUuid());
+            return userDao.getUserByUuid(UserAuthEntity.getUuid());
         }
     }
 
@@ -45,7 +45,7 @@ public class DeleteQuestionBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public String deleteQuestion(final QuestionEntity questionEntityToDelete, final UserEntity signedinUserEntity) throws AuthorizationFailedException {
 
-        if (signedinUserEntity.getRole().equalsIgnoreCase("admin") || (questionEntityToDelete.getUser_id().getUsername() == signedinUserEntity.getUsername())) {
+        if (signedinUserEntity.getRole().equalsIgnoreCase("admin") || (questionEntityToDelete.getUuid() == signedinUserEntity.getUuid())) {
 
             return questionDao.deleteQuestion(questionEntityToDelete);
         } else {

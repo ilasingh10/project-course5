@@ -53,9 +53,9 @@ public class UserDao {
         }
     }
 
-    public UserAuthEntity createAuthToken(final UserAuthEntity userAuthTokenEntity) {
-        entityManager.persist(userAuthTokenEntity);
-        return userAuthTokenEntity;
+    public UserAuthEntity createAuthToken(final UserAuthEntity UserAuthEntity) {
+        entityManager.persist(UserAuthEntity);
+        return UserAuthEntity;
     }
 
     public void updateUser(final UserEntity updatedUserEntity) {
@@ -68,7 +68,7 @@ public class UserDao {
 
     public UserAuthEntity getUserAuthToken(final String access_token) {
         try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthEntity.class).setParameter("access_token", access_token).getSingleResult();
+            return entityManager.createNamedQuery("userAuthByAccessToken", UserAuthEntity.class).setParameter("accessToken", access_token).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

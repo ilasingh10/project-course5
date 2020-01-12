@@ -32,20 +32,20 @@ public class AuthenticationService {
         final String encryptedPassword = CryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
-            UserAuthEntity userAuthTokenEntity = new UserAuthEntity();
-            userAuthTokenEntity.setUser(userEntity);
+            UserAuthEntity UserAuthEntity = new UserAuthEntity();
+            UserAuthEntity.setUser(userEntity);
             final ZonedDateTime now = ZonedDateTime.now();
             final ZonedDateTime expiresAt = now.plusHours(8);
 
-            userAuthTokenEntity.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
-            userAuthTokenEntity.setUuid(UUID.randomUUID().toString());
-            userAuthTokenEntity.setLoginAt(now);
-            userAuthTokenEntity.setExpiresAt(expiresAt);
+            UserAuthEntity.setAccessToken(jwtTokenProvider.generateToken(userEntity.getUuid(), now, expiresAt));
+            UserAuthEntity.setUuid(UUID.randomUUID().toString());
+            UserAuthEntity.setLoginAt(now);
+            UserAuthEntity.setExpiresAt(expiresAt);
 
-            userDao.createAuthToken(userAuthTokenEntity);
+            userDao.createAuthToken(UserAuthEntity);
 
             userDao.updateUser(userEntity);
-            return userAuthTokenEntity;
+            return UserAuthEntity;
         } else {
             throw new AuthenticationFailedException("ATH-002", "Password failed");
         }

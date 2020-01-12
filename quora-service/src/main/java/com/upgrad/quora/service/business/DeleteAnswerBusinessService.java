@@ -3,7 +3,7 @@ package com.upgrad.quora.service.business;
 import com.upgrad.quora.service.dao.AnswerDao;
 import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.AnswerEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -25,13 +25,13 @@ public class DeleteAnswerBusinessService {
     //Checks user signin status based on accessToken provided
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity verifyAuthToken(final String accessToken) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
-        if (userAuthTokenEntity == null) {
+        UserAuthEntity UserAuthEntity = userDao.getUserAuthToken(accessToken);
+        if (UserAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if (userAuthTokenEntity.getLogoutAt() != null) {
+        } else if (UserAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to delete an answer");
         } else {
-            return userDao.getUserByUuid(userAuthTokenEntity.getUuid());
+            return userDao.getUserByUuid(UserAuthEntity.getUuid());
         }
     }
 
@@ -49,7 +49,7 @@ public class DeleteAnswerBusinessService {
     //Deletes answer if signed in user is an admin or answer owner
     @Transactional(propagation = Propagation.REQUIRED)
     public String deleteAnswer(final AnswerEntity answerEntityToDelete, final UserEntity signedinUserEntity ) throws AuthorizationFailedException {
-        if (signedinUserEntity.getRole().equalsIgnoreCase("admin")||(answerEntityToDelete.getUser().getUserName()==signedinUserEntity.getUserName())) {
+        if (signedinUserEntity.getRole().equalsIgnoreCase("admin")||(answerEntityToDelete.getUser().getUsername()==signedinUserEntity.getUsername())) {
             return answerDao.deleteAnswer(answerEntityToDelete);
         } else {
             throw new AuthorizationFailedException("ATHR-003", "Only the answer owner or admin can delete the answer");

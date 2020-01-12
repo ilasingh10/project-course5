@@ -6,7 +6,7 @@ import com.upgrad.quora.service.business.DeleteAnswerBusinessService;
 import com.upgrad.quora.service.business.EditAnswerContentBusinessService;
 import com.upgrad.quora.service.business.GetAllAnswersToQuestionBusinessService;
 import com.upgrad.quora.service.entity.AnswerEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
@@ -44,11 +44,11 @@ public class AnswerController {
     public ResponseEntity<AnswerResponse> createAnswer(@PathVariable("questionId") final String questionId,
                                                        @RequestHeader("accessToken") final String accessToken, final AnswerRequest answerRequest) throws AuthorizationFailedException, InvalidQuestionException {
         String [] bearerToken = accessToken.split("Bearer ");
-        final UserAuthTokenEntity userAuthTokenEntity=createAnswerBusinessService.verifyAuthToken(bearerToken[1]);
+        final UserAuthEntity UserAuthEntity=createAnswerBusinessService.verifyAuthToken(bearerToken[1]);
         final AnswerEntity answerEntity=new AnswerEntity();
         answerEntity.setQuestionEntity(createAnswerBusinessService.verifyQuestionId(questionId));
         answerEntity.setUuid(UUID.randomUUID().toString());
-        answerEntity.setUser(userAuthTokenEntity.getUser());
+        answerEntity.setUser(UserAuthEntity.getUser());
         answerEntity.setAns(answerRequest.getAnswer());
         final ZonedDateTime now = ZonedDateTime.now();
         answerEntity.setDate(now);

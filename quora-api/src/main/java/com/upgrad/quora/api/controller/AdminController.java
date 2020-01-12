@@ -23,11 +23,11 @@ public class AdminController {
     @Autowired
     private UserDeleteService userDeleteService;
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/admin/user/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.DELETE, path = "/admin/user/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UserDeleteResponse> userDelete(@PathVariable("userId") final String userUuid, @RequestHeader("accessToken") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
-        String[] bearerToken = accessToken.split("Bearer ");
+        // String[] bearerToken = accessToken.split("Bearer ");
 
-        UserEntity signedInUserEntity = userAdminBusinessService.getUser(userUuid, bearerToken[1]);
+        UserEntity signedInUserEntity = userAdminBusinessService.getUser(userUuid, accessToken);
         UserEntity userToDelete = userDeleteService.getUserByUuid(userUuid);
         final String uuid = userDeleteService.deleteUser(signedInUserEntity, userToDelete);
         UserDeleteResponse userDeleteResponse = new UserDeleteResponse().id(uuid).status("USER SUCCESSFULLY DELETED");

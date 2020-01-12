@@ -25,18 +25,18 @@ public class GetAllQuestionsByUserBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void verifyAuthTokenAndUuid(final String userUuid, final String authorizationToken) throws
             UserNotFoundException, AuthorizationFailedException {
-        UserAuthEntity userAuthTokenEntity = userDao.getUserAuthToken(authorizationToken);
+        UserAuthEntity UserAuthEntity = userDao.getUserAuthToken(authorizationToken);
         if (userDao.getUserByUuid(userUuid) == null) {
             throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
-        } else if (userAuthTokenEntity == null) {
+        } else if (UserAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
-        } else if (userAuthTokenEntity.getLogout_at() != null) {
+        } else if (UserAuthEntity.getLogoutAt() != null) {
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get all questions posted by a specific user");
         }
     }
 
-    public List<QuestionEntity> getAllQuestionsByUserId(final UserEntity user) {
-        return questionDao.getAllQuestionsByUserId(user);
+    public List<QuestionEntity> getAllQuestionsByUserId(final long userId) {
+        return questionDao.getAllQuestionsByUserId(userId);
     }
 
     public UserAuthEntity getUserAuthTokenByUuid(final String userUuid) {

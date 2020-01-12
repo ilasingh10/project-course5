@@ -3,7 +3,6 @@ package com.upgrad.quora.api.controller;
 
 import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.*;
-import com.upgrad.quora.service.common.Identifier;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -32,8 +31,6 @@ public class QuestionController {
     @Autowired
     DeleteQuestionBusinessService deleteQuestionBusinessService;
     @Autowired
-    AuthorizationService authorizationService;
-    @Autowired
     private CreateQuestionBusinessService createQuestionBusinessService;
     @Autowired
     private GetAllQuestionsBusinessService getAllQuestionsBusinessService;
@@ -43,10 +40,10 @@ public class QuestionController {
     @RequestMapping(method = RequestMethod.POST, path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("accessToken") final String accessToken, final QuestionRequest questionRequest) throws AuthorizationFailedException {
         String[] bearerToken = accessToken.split("Bearer ");
-        UserAuthEntity userAuthTokenEntity = createQuestionBusinessService.verifyAuthToken(bearerToken[1]);
+        UserAuthEntity UserAuthEntity = createQuestionBusinessService.verifyAuthToken(bearerToken[1]);
         QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setUuid(UUID.randomUUID().toString());
-        questionEntity.setUser_id(userAuthTokenEntity.getUser_id());
+        questionEntity.setUserId(UserAuthEntity.getUser());
         questionEntity.setContent(questionRequest.getContent());
         final ZonedDateTime now = ZonedDateTime.now();
         questionEntity.setDate(now);
@@ -60,9 +57,9 @@ public class QuestionController {
         String[] bearerToken = accessToken.split("Bearer ");
 
         //checking for exception error by calling authorization service
-        UserAuthEntity userAuthTokenEntity = authorizationService.verifyAuthToken(bearerToken[1], Identifier.QUESTION_ENDPOINT);
+        UserAuthEntity UserAuthEntity = getAllQuestionsBusinessService.verifyAuthToken(bearerToken[1]);
         //declaring list for containing all the question entities
-        List<QuestionEntity> questionEntityList = getAllQuestionsBusinessService.getAllQuestions(bearerToken[1]);
+        List<QuestionEntity> questionEntityList = getAllQuestionsBusinessService.getAllQuestions();
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
         if (!questionEntityList.isEmpty()) {
             for (QuestionEntity questionEntity : questionEntityList) {
@@ -79,9 +76,9 @@ public class QuestionController {
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@PathVariable("userId") final String userId, @RequestHeader("accessToken") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
         String[] bearerToken = accessToken.split("Bearer ");
         getAllQuestionsByUserBusinessService.verifyAuthTokenAndUuid(userId, bearerToken[1]);
-        UserAuthEntity userAuthTokenEntity = getAllQuestionsByUserBusinessService.getUserAuthTokenByUuid(userId);
+        UserAuthEntity UserAuthEntity = getAllQuestionsByUserBusinessService.getUserAuthTokenByUuid(userId);
         List<QuestionEntity> allQuestionsByUser = new ArrayList<QuestionEntity>();
-        allQuestionsByUser.addAll(getAllQuestionsByUserBusinessService.getAllQuestionsByUserId((userAuthTokenEntity.getUser_id())));
+        allQuestionsByUser.addAll(getAllQuestionsByUserBusinessService.getAllQuestionsByUserId((UserAuthEntity.getUser().getId())));
         List<QuestionDetailsResponse> questionDetailsResponses = new ArrayList<QuestionDetailsResponse>();
 
         for (QuestionEntity question : allQuestionsByUser) {
