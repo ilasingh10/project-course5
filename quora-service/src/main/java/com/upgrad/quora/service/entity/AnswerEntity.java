@@ -4,6 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,34 +14,48 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "USER_AUTH")
+@Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name = "userAuthByAccessToken", query = "select ut from UserAuthEntity ut where ut.accessToken =:accessToken")
+        @NamedQuery(name = "answerByAnsUuid", query = "select a from AnswerEntity a where a.uuid =:uuid"),
+        @NamedQuery(name= "allAnswersByQuestion",query = "select a from AnswerEntity a where a.questionEntity = :questionEntity")
 })
-public class UserAuthEntity implements Serializable {
+public class AnswerEntity implements Serializable {
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
+
     @Column(name = "UUID")
     @Size(max = 200)
     private String uuid;
+
+    @Column(name = "ANS")
+    @NotNull
+    @Size(max = 255)
+    private String ans;
+    //foreign key
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID")
     private UserEntity user;
-    @Column(name = "ACCESS_TOKEN")
+    //foreign key
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "QUESTION_ID")
+    private QuestionEntity questionEntity;
+
+    @Column(name = "DATE")
     @NotNull
-    @Size(max = 500)
-    private String accessToken;
-    @Column(name = "LOGIN_AT")
-    @NotNull
-    private ZonedDateTime loginAt;
-    @Column(name = "EXPIRES_AT")
-    @NotNull
-    private ZonedDateTime expiresAt;
-    @Column(name = "LOGOUT_AT")
-    private ZonedDateTime logoutAt;
+    private ZonedDateTime date;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getUuid() {
         return uuid;
@@ -49,12 +65,12 @@ public class UserAuthEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public long getId() {
-        return id;
+    public String getAns() {
+        return ans;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setAns(String ans) {
+        this.ans = ans;
     }
 
     public UserEntity getUser() {
@@ -65,38 +81,21 @@ public class UserAuthEntity implements Serializable {
         this.user = user;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public QuestionEntity getQuestionEntity() {
+        return questionEntity;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setQuestionEntity(QuestionEntity questionEntity) {
+        this.questionEntity = questionEntity;
     }
 
-    public ZonedDateTime getLoginAt() {
-        return loginAt;
+    public ZonedDateTime getDate() {
+        return date;
     }
 
-    public void setLoginAt(ZonedDateTime loginAt) {
-        this.loginAt = loginAt;
+    public void setDate(ZonedDateTime date) {
+        this.date = date;
     }
-
-    public ZonedDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(ZonedDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public ZonedDateTime getLogoutAt() {
-        return logoutAt;
-    }
-
-    public void setLogoutAt(ZonedDateTime logoutAt) {
-        this.logoutAt = logoutAt;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return new EqualsBuilder().append(this, obj).isEquals();
@@ -112,3 +111,7 @@ public class UserAuthEntity implements Serializable {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }
+
+
+
+
